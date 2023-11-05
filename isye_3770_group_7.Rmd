@@ -48,6 +48,51 @@ sqrt(var(cars$speed))
 cor.test(cars$speed, cars$dist)
 ```
 
+
+```{r}
+library(readr)
+billinioare_data <- read_csv("forbes_2640_billionaires.csv")
+billinioare_data <- billinioare_data[, !(names(billinioare_data) %in% c("Age", "Philanthropy Score", "forbes_id", "Source of Wealth", "Self Made", "Self-Made Score"))]
+
+options(dplyr.width = Inf)
+head(billinioare_data, 20)
+```
+
+```{r}
+library(corrplot)
+library(ggplot2)
+
+ggplot(billinioare_data, aes(x = age, y = net_worth)) +
+  geom_point() +
+  labs(x = "Age", y = "Net Worth") +
+  ggtitle("Scatter Plot of Age vs. Net Worth")
+
+correlation_matrix <- cor(billinioare_data[sapply(billinioare_data, is.numeric)])
+corrplot(correlation_matrix, method = "color")
+
+
+```
+
+```{r}
+library(readr)
+wage_data <- read_csv("college_wage_premium.csv")
+wage_data <- wage_data[, !(names(wage_data) %in% c("Age", "Philanthropy Score", "forbes_id", "Source of Wealth", "Self Made", "Self-Made Score"))]
+
+options(dplyr.height = Inf)
+head(wage_data, 30)
+
+correlation_matrix <- cor(wage_data[sapply(wage_data, is.numeric)])
+corrplot(correlation_matrix, method = "color")
+
+plot(wage_data)
+mean()
+median()
+range()
+sqrt()
+
+cor.test(,)
+```
+
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
 When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
