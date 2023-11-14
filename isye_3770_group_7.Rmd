@@ -76,7 +76,6 @@ corrplot(correlation_matrix, method = "color")
 ```{r}
 library(readr)
 wage_data <- read_csv("college_wage_premium.csv")
-wage_data <- wage_data[, !(names(wage_data) %in% c("Age", "Philanthropy Score", "forbes_id", "Source of Wealth", "Self Made", "Self-Made Score"))]
 
 options(dplyr.height = Inf)
 head(wage_data, 30)
@@ -85,14 +84,73 @@ correlation_matrix <- cor(wage_data[sapply(wage_data, is.numeric)])
 corrplot(correlation_matrix, method = "color")
 
 plot(wage_data)
+
+```
 mean()
 median()
 range()
 sqrt()
 
 cor.test(,)
+
+```{r}
+wage_data$high_school_difference <- ((wage_data$men_high_school - wage_data$women_high_school) / wage_data$women_high_school) * 100
+wage_data$bachelors_difference <- ((wage_data$men_bachelors_degree - wage_data$women_bachelors_degree) / wage_data$women_bachelors_degree) * 100
+percentage_data <- wage_data[, c("year", "high_school_difference", "bachelors_difference")]
+
+# Step 3: Plot the data using a line plot
+library(ggplot2)
+
+ggplot(percentage_data, aes(x = year)) +
+  geom_line(aes(y = high_school_difference, color = "High School")) +
+  geom_line(aes(y = bachelors_difference, color = "Bachelor's Degree")) +
+  labs(
+    x = "Year",
+    y = "Percentage Difference",
+    color = "Education Level"
+  ) +
+  scale_color_manual(values = c("High School" = "blue", "Bachelor's Degree" = "red")) +
+  theme_minimal() +
+  ylim(-10, 70)
+
 ```
 
+Project Part 2 
+Individual Statistics
+```{r}
+
+hs = wage_data$high_school
+hs_mean = mean(hs)
+hs_median = median(hs)
+hs_mode = mode(hs)
+
+cat("high school stats mean: ", hs_mean, "median: median", hs_median, "mode: ", hs_mode)
+boxplot(hs)
+# find iqr
+iqr <- IQR(hs)
+lower_bound <- quantile(hs)[2] - 1.5 * iqr
+upper_bound <- quantile(hs)[4] + 1.5 * iqr
+# Remove outliers
+hs_no_outliers <- hs[hs >= lower_bound & hs <= upper_bound ]
+boxplot(hs)
+
+
+ba = wage_data$bachelors_degree
+ba = wage_data$high_school
+ba_mean = mean(ba)
+ba_median = median(ba)
+ba_mode = mode(ba)
+
+cat("high school stats mean: ", ba_mean, "median: median", ba_median, "mode: ", ba_mode)
+boxplot(ba)
+# find iqr
+iqr <- IQR(ba)
+lower_bound <- quantile(ba)[2] - 1.5 * iqr
+upper_bound <- quantile(ba)[4] + 1.5 * iqr
+# Remove outliers
+ba_no_outliers <- ba[ba >= lower_bound & ba <= upper_bound ]
+boxplot(ba)
+```
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
 When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
