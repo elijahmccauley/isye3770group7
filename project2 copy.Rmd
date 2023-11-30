@@ -1,0 +1,159 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+
+
+```{R}
+library(readr)
+library(corrplot)
+library(ggplot2)
+wages <- read_csv("/Users/emccauley6/Downloads/college_wage_premium.csv")
+options(dplyr.height = Inf)
+
+head(wages, 30)
+
+correlation_matrix <- cor(wages[sapply(wages, is.numeric)])
+corrplot(correlation_matrix, method = "color")
+
+plot(wages)
+plot(wages$year, wages$high_school, main="High School wages over time", ylab= "hourly wage", xlab="year", col="blue")
+plot(wages$year, wages$bachelors_degree, main="Bachelor's Degree wages over time", ylab= "hourly wage", xlab="year", col="red")
+
+
+wages$high_school_difference <- ((wages$men_high_school - wages$women_high_school) / wages$women_high_school) * 100
+wages$bachelors_difference <- ((wages$men_bachelors_degree - wages$women_bachelors_degree) / wages$women_bachelors_degree) * 100
+percentage_data <- wages[, c("year", "high_school_difference", "bachelors_difference")]
+
+# Step 3: Plot the data using a line plot
+library(ggplot2)
+
+ggplot(percentage_data, aes(x = year)) +
+  geom_line(aes(y = high_school_difference, color = "High School")) +
+  geom_line(aes(y = bachelors_difference, color = "Bachelor's Degree")) +
+  labs(
+    x = "Year",
+    y = "Percentage Difference Between Men and Women Average Wage",
+    color = "Education Level"
+  ) +
+  scale_color_manual(values = c("High School" = "blue", "Bachelor's Degree" = "red")) +
+  theme_minimal() +
+  ylim(-10, 70)
+
+```
+```{r}
+men_hs = wages$men_high_school
+mean(men_hs)
+men_ba = wages$men_bachelors_degree
+mean(men_ba)
+men_avg = (men_hs+men_ba)/2
+mean(men_avg)
+median(men_avg)
+sd(men_avg)
+min(men_avg)
+max(men_avg)
+var(men_avg)
+getmode <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+result <- getmode(men_avg)
+print(result)
+
+result <- t.test(men_avg)
+men_confidence_interval <- result$conf.int
+men_confidence_interval
+
+
+women_hs = wages$women_high_school
+mean(women_hs)
+women_ba = wages$women_bachelors_degree
+mean(women_ba)
+women_avg = (women_hs+women_ba)/2
+mean(women_avg)
+median(women_avg)
+sd(women_avg)
+min(women_avg)
+max(women_avg)
+var(women_avg)
+getmode <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+result <- getmode(women_avg)
+print(result)
+
+result <- t.test(women_avg)
+women_confidence_interval <- result$conf.int
+women_confidence_interval
+
+hs = wages$high_school
+hs_mean = mean(hs)
+hs_median = median(hs)
+hs_sd = sd(hs)
+hs_min = min(hs)
+hs_max = max(hs)
+hs_var = var(hs)
+hs_range = range(hs)
+
+getmode <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+result <- getmode(hs)
+print(result)
+
+result <- t.test(hs)
+hs_confidence_interval <- result$conf.int
+
+cat("high school stats mean: ", hs_mean, "median: ", hs_median, "stdev: ", hs_sd, "high school confidence interval: ", hs_confidence_interval)
+
+hist(hs, main="Histogram of High School Houly Wages", xlab="Hourly Wage", col="blue")
+
+boxplot(hs, main="High School Hourly Wage", ylab="Hourly Wage", col="blue")
+# find iqr
+iqr <- IQR(hs)
+lower_bound <- quantile(hs)[2] - 1.5 * iqr
+upper_bound <- quantile(hs)[4] + 1.5 * iqr
+# Remove outliers
+hs_no_outliers <- hs[hs >= lower_bound & hs <= upper_bound ]
+boxplot(hs_no_outliers, main="High School Hourly Wage (w/o outliers)", ylab="Hourly Wage", col="blue")
+
+
+ba = wages$bachelors_degree
+ba_mean = mean(ba)
+ba_median = median(ba)
+ba_sd = sd(ba)
+ba_min = min(ba)
+ba_max = max(ba)
+ba_var = var(ba)
+ba_range = range(ba)
+
+getmode <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+result <- getmode(ba)
+print(result)
+
+result <- t.test(ba)
+ba_confidence_interval <- result$conf.int
+cat("min", ba_min, "max", ba_max, "var", ba_var, "range", ba_range)
+cat("bachelors degree stats mean: ", ba_mean, "median: ", ba_median, "stdev: ", ba_sd, "bachelors degree confidence interval: ", ba_confidence_interval)
+
+hist(ba, main="Histogram of Bachelor Graduate's Houly Wages", xlab="Hourly Wage", col="red")
+
+boxplot(ba, main="Bachelor's Degree Hourly Wage", ylab="Hourly Wage", col="red")
+# find iqr
+iqr <- IQR(ba)
+lower_bound <- quantile(ba)[2] - 1.5 * iqr
+upper_bound <- quantile(ba)[4] + 1.5 * iqr
+# Remove outliers
+ba_no_outliers <- ba[ba >= lower_bound & ba <= upper_bound ]
+boxplot(ba_no_outliers, main="Bachelor's Degree Hourly Wage (w/o outliers)", ylab="Hourly Wage", col="red")
+```
+
+
+
+
